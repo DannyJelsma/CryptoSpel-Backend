@@ -14,11 +14,8 @@ app.post('/authenticate', (req, res) => {
     if (req.body.username === temp_user && req.body.password === temp_passwd) {
         res.json(generateToken(req.body.username));
     } else {
-        // TODO: Handle
-        res.send("no");
+        res.status(400);
     }
-
-    res.end();
 });
 
 app.listen(8080, () => {
