@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const bodyParser = require('body-parser')
 
 const temp_user = "test"
 const temp_passwd = "test"
