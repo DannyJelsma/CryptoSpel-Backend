@@ -54,6 +54,8 @@ function initializeWebsockets() {
             let coinName = coin.s;
             let price = coin.o;
 
+            if (!coinName.endsWith("EUR")) continue;
+
             try {
                 let fileName = './coins/' + coinName + '.json';
                 let historyEntry = { date: Date.now(), price: price};
