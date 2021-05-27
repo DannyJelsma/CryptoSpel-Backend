@@ -39,6 +39,7 @@ initializeWebsockets();
 function initializeWebsockets() {
     let client = new ws('wss://stream.binance.com:9443/ws/test');
 
+    client.on('close', initializeWebsockets);
     client.on('message', msg => {
         let updates = JSON.parse(msg);
 
@@ -66,8 +67,9 @@ function initializeWebsockets() {
                 if (fs.existsSync(fileName)) {
                     let data = fs.readFileSync(fileName, 'utf-8');
                     let json = JSON.parse(data);
+                    let lastHistoryEntry = json.history[json.history.length - 1];
 
-                    if (json.history[json.history.length] !== historyEntry.price) {
+                    if (lastHistoryEntry.price !== historyEntry.price && Date.now() > new Date(lastHistoryEntry.date + 60000)) {
                         json.history.push(historyEntry);
                         fs.writeFileSync(fileName, JSON.stringify(json));
                     }
