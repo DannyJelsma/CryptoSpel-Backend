@@ -20,15 +20,14 @@ app.post('/authenticate', (req, res) => {
 });
 
 app.get('/history/:ticker', (req, res) => {
-    let fileName = './coins/' + req.params.ticker + '.json';
+    try {
+        let fileName = './coins/' + req.params.ticker + '.json';
+        let data = fs.readFileSync(fileName, 'utf-8');
 
-    fs.readFile( fileName, (err, json) => {
-        if (err) {
-            res.status(404).end();
-        } else {
-            res.send(json);
-        }
-    });
+        res.json(JSON.parse(data));
+    } catch (err) {
+        res.status(404).end();
+    }
 })
 
 app.listen(8080, () => {
