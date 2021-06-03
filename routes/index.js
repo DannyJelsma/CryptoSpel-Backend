@@ -9,7 +9,7 @@ router.get('/history/:ticker', async function (req, res, next) {
   if (!exists) {
     res.status(404).end();
   } else {
-    let result = await models.Coin.findOne({ticker: req.params.ticker});
+    let result = await models.Coin.findOne({ticker: req.params.ticker}).exec();
     res.json(result);
   }
 });
