@@ -31,7 +31,6 @@ async function handleMessage(msg) {
     if (!coinName.endsWith('EUR')) continue;
 
     let exists = await models.Coin.exists({ticker: coinName});
-
     let historyEntry = {date: Date.now(), price: price};
     if (exists) {
       let coin = await models.Coin.findOne({ticker: coinName});
