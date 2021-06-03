@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const dotenv = require('dotenv');
 const binance = require('./modules/binance');
 const database = require('./database');
 const models = require('./models');
 
 dotenv.config();
+app.use(cors());
 app.use(
   express.urlencoded({
     extended: true,

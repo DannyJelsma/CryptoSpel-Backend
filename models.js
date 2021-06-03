@@ -16,14 +16,14 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const coinSchema = new mongoose.Schema( {
+const coinSchema = new mongoose.Schema({
   ticker: String,
-  history: []
-})
+  history: [],
+});
 
 const User = mongoose.model('User', userSchema);
-const Coin = mongoose.model('Coin', coinSchema)
+const Coin = mongoose.model('Coin', coinSchema);
 module.exports = {
   User,
-  Coin
+  Coin,
 };
