@@ -31,14 +31,14 @@ async function handleMessage(msg) {
     if (!coinName.endsWith('EUR')) continue;
 
     let exists = await models.Coin.exists({ticker: coinName});
-    let historyEntry = {date: Date.now(), price: price};
+    let historyEntry = {date: Date.now(), price: parseFloat(price)};
     if (exists) {
-      let coin = await models.Coin.findOne({ticker: coinName});
+      let coin = await models.Coin.findOne({ticker: coinName}).exec();
       let lastHistoryEntry = coin.history[coin.history.length - 1];
 
       if (lastHistoryEntry.price !== historyEntry.price && Date.now() > new Date(lastHistoryEntry.date + 60000)) {
         coin.history.push(historyEntry);
-        coin.save();
+        await coin.save();
       }
     } else {
       await new models.Coin({ticker: coinName, history: [historyEntry]}).save();
