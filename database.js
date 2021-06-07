@@ -14,9 +14,8 @@
 // };
 
 // // mongoose -> https://www.youtube.com/watch?v=b59Pdt5LJG8
-
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://root:SiCGyJeGcW23CcMl@cluster0.9cden.mongodb.net/cryptospel', {
+mongoose.connect('mongodb://project:T!m!tG6vLOn7RxrZyaMTAg5@95.216.161.219:27017/project?authSource=admin', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
