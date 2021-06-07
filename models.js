@@ -17,7 +17,11 @@ const userSchema = new mongoose.Schema({
 });
 
 const coinSchema = new mongoose.Schema( {
-  ticker: String,
+  ticker: {
+    type: String,
+    required: [true, 'A ticker must be provided.'],
+    unique: true,
+  },
   history: []
 })
 
