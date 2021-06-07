@@ -17,14 +17,18 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const coinSchema = new mongoose.Schema({
-  ticker: String,
-  history: [],
-});
+const coinSchema = new mongoose.Schema( {
+  ticker: {
+    type: String,
+    required: [true, 'A ticker must be provided.'],
+    unique: true,
+  },
+  history: []
+})
 
 const User = mongoose.model('User', userSchema);
-const Coin = mongoose.model('Coin', coinSchema);
+const Coin = mongoose.model('Coin', coinSchema)
 module.exports = {
   User,
-  Coin,
+  Coin
 };
