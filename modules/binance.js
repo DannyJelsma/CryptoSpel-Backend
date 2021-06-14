@@ -26,7 +26,7 @@ async function handleMessage(msg) {
     }
 
     let coinName = coin.s;
-    let price = coin.b;
+    let price = coin.b; // <- highest bid price
 
     if (!coinName.endsWith('EUR')) continue;
 
