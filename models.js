@@ -17,18 +17,51 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const coinSchema = new mongoose.Schema( {
+const coinSchema = new mongoose.Schema({
   ticker: {
     type: String,
     required: [true, 'A ticker must be provided.'],
     unique: true,
   },
-  history: []
-})
+  history: [
+    {
+      date: Number,
+      price: Number,
+    },
+  ],
+});
 
+const coinMetadataSchema = new mongoose.Schema({
+  name: String,
+  icon: String,
+  graph: String,
+  ticker: {
+    type: String,
+    unique: true,
+  },
+});
+
+const testSchema = new mongoose.Schema({
+  ticker: {
+    type: String,
+    required: [true, 'A ticker must be provided.'],
+    unique: true,
+  },
+  history: [
+    {
+      date: Number,
+      price: Number,
+    },
+  ],
+});
+
+const CoinMetadata = mongoose.model('CoinMetadata', coinMetadataSchema);
 const User = mongoose.model('User', userSchema);
-const Coin = mongoose.model('Coin', coinSchema)
+const Coin = mongoose.model('Coin', coinSchema);
+const Test = mongoose.model('Test', testSchema);
 module.exports = {
   User,
-  Coin
+  Coin,
+  CoinMetadata,
+  Test,
 };

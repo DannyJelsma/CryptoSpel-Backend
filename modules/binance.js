@@ -10,7 +10,7 @@ function initializeWebsockets() {
   client.on('message', handleMessage);
 
   client.once('open', () => {
-    client.send(JSON.stringify({method: 'SUBSCRIBE', params: ['!ticker@arr'], id: 1}));
+    client.send(JSON.stringify({ method: 'SUBSCRIBE', params: ['!ticker@arr'], id: 1 }));
   });
 }
 
@@ -26,14 +26,14 @@ async function handleMessage(msg) {
     }
 
     let coinName = coin.s;
-    let price = coin.o;
+    let price = coin.b;
 
     if (!coinName.endsWith('EUR')) continue;
 
-    let exists = await models.Coin.exists({ticker: coinName});
-    let historyEntry = {date: Date.now(), price: parseFloat(price)};
+    let exists = await models.Coin.exists({ ticker: coinName });
+    let historyEntry = { date: Date.now(), price: parseFloat(price) };
     if (exists) {
-      let coin = await models.Coin.findOne({ticker: coinName}).exec();
+      let coin = await models.Coin.findOne({ ticker: coinName }).exec();
       let lastHistoryEntry = coin.history[coin.history.length - 1];
 
       if (lastHistoryEntry.price !== historyEntry.price && Date.now() > new Date(lastHistoryEntry.date + 60000)) {
@@ -41,7 +41,7 @@ async function handleMessage(msg) {
         await coin.save();
       }
     } else {
-      await new models.Coin({ticker: coinName, history: [historyEntry]}).save();
+      await new models.Coin({ ticker: coinName, history: [historyEntry] }).save();
     }
   }
 }
