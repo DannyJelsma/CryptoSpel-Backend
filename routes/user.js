@@ -13,11 +13,12 @@ router.post('/login', async (req, res, next) => {
       username,
     }).exec();
 
-    if (!(await argon2.verify(user.password, password))) {
-      res.status(400).json({
+    if (!user) return res.status(400).json({ messages: ['Username could not be found.'] });
+    const isValid = await argon2.verify(user.password, password);
+    if (!isValid)
+      return res.status(400).json({
         messages: ['Username and password do not match.'],
       });
-    }
 
     res.status(200).json({
       token: generateToken(user.username),

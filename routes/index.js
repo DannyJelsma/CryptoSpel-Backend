@@ -18,6 +18,8 @@ router.get('/history/:ticker', async function (req, res, next) {
 // Route that obtains all the currencies and metadata
 router.get('/currencies', async function (req, res, next) {
   try {
+    // TODO: caching
+
     const coinMetadata = await models.CoinMetadata.find({});
 
     // loop through all the coins and add the current price

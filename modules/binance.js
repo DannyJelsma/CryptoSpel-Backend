@@ -1,7 +1,7 @@
 const ws = require('ws');
 const models = require('../models.js');
 
-initializeWebsockets();
+// initializeWebsockets();
 
 function initializeWebsockets() {
   let client = new ws('wss://stream.binance.com:9443/ws/test');
