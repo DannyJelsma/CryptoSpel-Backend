@@ -1,17 +1,25 @@
 const express = require('express');
 const moment = require('moment');
 const models = require('../models.js');
+const binance = require('../modules/binance');
 
 let router = express.Router();
 
 router.get('/history/:ticker', async function (req, res, next) {
-  let exists = await models.Coin.exists({ ticker: req.params.ticker });
+  let ticker = req.params.ticker;
+  let exists = await models.Coin.exists({ ticker: ticker });
 
   if (!exists) {
     res.status(404).end();
   } else {
-    let result = await models.Coin.findOne({ ticker: req.params.ticker }).exec();
-    res.json(result);
+    if (!binance.historyCache.has(ticker)) {
+      let result = await models.Coin.findOne({ticker: ticker}).select({history: 1}).lean().exec();
+
+      binance.historyCache.set(ticker, result);
+      res.json(result);
+    } else {
+      res.json(binance.historyCache.get(ticker));
+    }
   }
 });
 
@@ -20,7 +28,7 @@ router.get('/currencies', async function (req, res, next) {
   try {
     // TODO: caching
 
-    const coinMetadata = await models.CoinMetadata.find({});
+    const coinMetadata = await models.CoinMetadata.find({}).lean().exec();
 
     // loop through all the coins and add the current price
     const prices = await models.Coin.aggregate([
