@@ -51,7 +51,7 @@ async function handleMessage(msg) {
     if (!coinName.endsWith('EUR')) continue;
 
     if (price > 1) {
-      price = price.toFixed(2);
+      price = parseFloat(price.toFixed(2));
     }
 
     let historyEntry = {date: Date.now(), price: price};
