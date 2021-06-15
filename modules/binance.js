@@ -15,7 +15,7 @@ async function pushQueueToDatabase() {
       let history = historyCache.get(ticker);
 
       history.history.push(entry);
-      history.set(ticker, history);
+      historyCache.set(ticker, history);
     }
   }
 
