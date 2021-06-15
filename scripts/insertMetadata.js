@@ -8,7 +8,7 @@ const database = require('../database');
 
 database.once('open', async () => {
   try {
-    const tickers = (await models.Coin.find({}, 'ticker')).map((i) => i.ticker.replace('EUR', ''));
+    const tickers = (await models.Coin.find({}, 'ticker').lean().exec()).map((i) => i.ticker.replace('EUR', ''));
 
     const {
       data: {

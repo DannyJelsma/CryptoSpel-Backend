@@ -1,7 +1,26 @@
 const ws = require('ws');
 const models = require('../models.js');
 
-// initializeWebsockets();
+initializeWebsockets();
+setInterval(pushQueueToDatabase, 60000);
+
+let dataQueue = new Map();
+let historyCache = new Map();
+
+async function pushQueueToDatabase() {
+  for (let [ticker, entry] of dataQueue) {
+    models.Coin.updateOne({ticker: ticker}, { $push: {entry} });
+
+    if (historyCache.has(ticker)) {
+      let history = historyCache.get(ticker);
+
+      history.history.push(entry);
+      historyCache.set(ticker, history);
+    }
+  }
+
+  dataQueue.clear();
+}
 
 function initializeWebsockets() {
   let client = new ws('wss://stream.binance.com:9443/ws/test');
@@ -26,22 +45,29 @@ async function handleMessage(msg) {
     }
 
     let coinName = coin.s;
-    let price = coin.b; // <- highest bid price
+    let price = parseFloat(coin.b); // <- highest bid price
 
+    // Only add coins that support EUR.
     if (!coinName.endsWith('EUR')) continue;
 
-    let exists = await models.Coin.exists({ ticker: coinName });
-    let historyEntry = { date: Date.now(), price: parseFloat(price) };
-    if (exists) {
-      let coin = await models.Coin.findOne({ ticker: coinName }).exec();
-      let lastHistoryEntry = coin.history[coin.history.length - 1];
+    if (price > 1) {
+      price = price.toFixed(2);
+    }
 
-      if (lastHistoryEntry.price !== historyEntry.price && Date.now() > new Date(lastHistoryEntry.date + 60000)) {
-        coin.history.push(historyEntry);
-        await coin.save();
+    let historyEntry = {date: Date.now(), price: price};
+
+    if (dataQueue.has(coinName)) {
+      let lastEntry = dataQueue.get(coinName);
+
+      if (Date.now() > new Date(lastEntry.date + 60000)) {
+        dataQueue.set(coinName, historyEntry);
       }
     } else {
-      await new models.Coin({ ticker: coinName, history: [historyEntry] }).save();
+      dataQueue.set(coinName, historyEntry);
     }
   }
 }
+
+module.exports = {
+  historyCache
+};

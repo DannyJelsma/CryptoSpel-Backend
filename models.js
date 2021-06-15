@@ -22,6 +22,7 @@ const coinSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A ticker must be provided.'],
     unique: true,
+    historyIgnore: true
   },
   history: [
     {
