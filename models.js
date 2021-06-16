@@ -22,7 +22,7 @@ const coinSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A ticker must be provided.'],
     unique: true,
-    historyIgnore: true
+    historyIgnore: true,
   },
   history: [
     {
@@ -56,7 +56,6 @@ const testSchema = new mongoose.Schema({
   ],
 });
 
-// TODO: add pool owner and list of participants
 const poolSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -77,6 +76,13 @@ const poolSchema = new mongoose.Schema({
       message: 'A pool may not end within 24 hours.',
     },
   },
+  created_by: String,
+  participants: [
+    {
+      user: String,
+      balance: Number,
+    },
+  ],
 });
 
 const CoinMetadata = mongoose.model('CoinMetadata', coinMetadataSchema);
