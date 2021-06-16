@@ -3,7 +3,6 @@ const models = require('../models');
 
 let router = express.Router();
 
-// TODO: only allowed when authenticated
 router.post('/create', async (req, res, next) => {
   const { name, budget, end_date } = req.body;
 

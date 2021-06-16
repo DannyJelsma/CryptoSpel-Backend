@@ -2,10 +2,11 @@ const express = require('express');
 const moment = require('moment');
 const models = require('../models.js');
 const binance = require('../modules/binance');
+const { requireAuthentication } = require('../modules/helpers');
 
 let router = express.Router();
 
-router.get('/history/:ticker', async function (req, res, next) {
+router.get('/history/:ticker', requireAuthentication, async function (req, res, next) {
   let ticker = req.params.ticker;
   let exists = await models.Coin.exists({ ticker: ticker });
 
@@ -28,7 +29,7 @@ let currenciesCache = {
   updated: 0,
   currencies: [],
 };
-router.get('/currencies', async function (req, res, next) {
+router.get('/currencies', requireAuthentication, async function (req, res, next) {
   if (Date.now() - currenciesCache.updated >= 15 * 60 * 1000) {
     // It's been 15 minutes - update it.
     try {
