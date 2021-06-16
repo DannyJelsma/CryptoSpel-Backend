@@ -9,7 +9,14 @@ let historyCache = new Map();
 
 async function pushQueueToDatabase() {
   for (let [ticker, entry] of dataQueue) {
-    models.Coin.updateOne({ticker: ticker}, { $push: {entry} });
+    let exists = await models.Coin.exists({ticker: ticker});
+
+    if (!exists) {
+      await new models.Coin({ ticker: ticker, history: [entry]}).save();
+      continue;
+    }
+
+    await models.Coin.updateOne({ticker: ticker}, { $push: { history: entry } });
 
     if (historyCache.has(ticker)) {
       let history = historyCache.get(ticker);
