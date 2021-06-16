@@ -13,7 +13,9 @@ router.post('/login', async (req, res, next) => {
   try {
     const user = await models.User.findOne({
       username,
-    }).lean().exec();
+    })
+      .lean()
+      .exec();
 
     if (!user) return res.status(400).json({ messages: ['Username could not be found.'] });
     const isValid = await argon2.verify(user.password, password);
