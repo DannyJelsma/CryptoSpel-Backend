@@ -21,10 +21,17 @@ router.post('/login', async (req, res, next) => {
     const isValid = await argon2.verify(user.password, password);
     if (!isValid)
       return res.status(400).json({
-        messages: ['Username and password do not match.'],
+        success: false,
+        errors: {
+          email: [
+            'Invalid username or password'
+          ]
+        },
+        //messages: ['Username and password do not match.'],
       });
 
     res.status(200).json({
+      success: true,
       token: generateToken(user.username),
     });
   } catch (err) {
@@ -47,7 +54,7 @@ router.post('/register', async (req, res, next) => {
     res.status(200).end();
   } catch (err) {
     if (err.name === 'MongoError' && err.code === 11000) {
-      return res.status(400).json({ messages: ['A unique username must be provided.'] });
+      return res.status(400).json({ messages: ['A unique username must be provided'] });
     }
 
     if (err.name === 'ValidationError') {
