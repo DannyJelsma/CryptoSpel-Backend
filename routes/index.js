@@ -71,7 +71,7 @@ router.get('/currencies', async function (req, res, next) {
       currenciesCache.currencies = currencies;
     } catch (err) {
       console.log(err);
-      res.status(400).end();
+      return res.status(400).end();
     }
   }
 
