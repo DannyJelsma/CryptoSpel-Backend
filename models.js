@@ -42,20 +42,6 @@ const coinMetadataSchema = new mongoose.Schema({
   },
 });
 
-const testSchema = new mongoose.Schema({
-  ticker: {
-    type: String,
-    required: [true, 'A ticker must be provided.'],
-    unique: true,
-  },
-  history: [
-    {
-      date: Number,
-      price: Number,
-    },
-  ],
-});
-
 const poolSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -77,23 +63,35 @@ const poolSchema = new mongoose.Schema({
     },
   },
   created_by: String,
-  participants: [
-    {
-      user: String,
-      balance: Number,
-    },
-  ],
+});
+
+const participantSchema = new mongoose.Schema({
+  pool: String,
+  user: String,
+  balance: Number,
+});
+
+const assetSchema = new mongoose.Schema({
+  pool: String,
+  user: String,
+  ticker: String,
+  amount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const CoinMetadata = mongoose.model('CoinMetadata', coinMetadataSchema);
 const User = mongoose.model('User', userSchema);
 const Coin = mongoose.model('Coin', coinSchema);
-const Test = mongoose.model('Test', testSchema);
 const Pool = mongoose.model('Pool', poolSchema);
+const Asset = mongoose.model('Asset', assetSchema);
+const Participant = mongoose.model('Participant', participantSchema);
 module.exports = {
   User,
   Coin,
   CoinMetadata,
-  Test,
+  Asset,
   Pool,
+  Participant,
 };

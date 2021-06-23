@@ -1,8 +1,8 @@
 const express = require('express');
-const moment = require('moment');
 const models = require('../models.js');
 const binance = require('../modules/binance');
 const { requireAuthentication } = require('../modules/helpers');
+const currencies = require('../modules/currencies');
 
 let router = express.Router();
 
@@ -25,59 +25,8 @@ router.get('/history/:ticker', requireAuthentication, async function (req, res, 
 });
 
 // Route that obtains all the currencies and metadata
-let currenciesCache = {
-  updated: 0,
-  currencies: [],
-};
 router.get('/currencies', requireAuthentication, async function (req, res, next) {
-  if (Date.now() - currenciesCache.updated >= 15 * 60 * 1000) {
-    // It's been 15 minutes - update it.
-    try {
-      const coinMetadata = await models.CoinMetadata.find({});
-
-      // loop through all the coins and add the current price
-      const prices = await models.Coin.aggregate([
-        {
-          $project: {
-            ticker: 1,
-            history: {
-              $filter: {
-                input: '$history',
-                as: 'item',
-                cond: { $gt: ['$$item.date', new Date().getTime() - 1000 * 60 * 60 * 24] },
-              },
-            },
-          },
-        },
-      ]);
-
-      let currencies = [];
-      for (let i = 0; i < coinMetadata.length; i++) {
-        const { name, icon, graph, ticker } = coinMetadata[i];
-
-        // match prices
-        const { history: pricesFromCoin } = prices.find((i) => i.ticker === ticker + 'EUR');
-
-        currencies.push({
-          name,
-          icon,
-          graph,
-          ticker,
-          previous_price: parseFloat(pricesFromCoin[0].price),
-          price: parseFloat(pricesFromCoin[pricesFromCoin.length - 1].price),
-        });
-      }
-
-      currenciesCache.updated = Date.now();
-      currenciesCache.currencies = currencies;
-    } catch (err) {
-      console.log(err);
-      return res.status(400).end();
-    }
-  }
-
-  const { currencies } = currenciesCache;
-  res.json(currencies);
+  res.json(currencies.getCurrencies());
 });
 
 module.exports = router;
