@@ -5,6 +5,25 @@ const currencies = require('../modules/currencies');
 
 let router = express.Router();
 
+// get information of user for pool (used for retrieving balance)
+router.get('/user/:pool_id', async (req, res, next) => {
+  const { pool_id } = req.params;
+
+  try {
+    const { balance } = await models.Participant.findOne({
+      pool: pool_id,
+      user: req.user._id,
+    });
+
+    res.json({
+      balance,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).end();
+  }
+});
+
 // todo: turn into a transaction
 router.post('/create', async (req, res, next) => {
   const { name, budget, end_date } = req.body;
@@ -107,7 +126,7 @@ router.get('/assets/:pool_id', async (req, res, next) => {
     const assets = await models.Asset.find(
       {
         pool: pool_id,
-        user: req.user.id,
+        user: req.user._id,
       },
       {
         _id: 0,
