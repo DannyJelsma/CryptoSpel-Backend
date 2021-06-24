@@ -5,17 +5,28 @@ const currencies = require('../modules/currencies');
 
 let router = express.Router();
 
+router.get('/leaderboard/:pool_id', async (req, res, next) => {
+  const { pool_id } = req.params;
+  const leaderboard = currencies.getLeaderboard(pool_id);
+  res.json(leaderboard);
+});
+
 // get information of user for pool (used for retrieving balance)
 router.get('/user/:pool_id', async (req, res, next) => {
   const { pool_id } = req.params;
 
   try {
+    const { username } = await models.User.findOne({
+      _id: req.user._id,
+    });
+
     const { balance } = await models.Participant.findOne({
       pool: pool_id,
       user: req.user._id,
     });
 
     res.json({
+      username,
       balance,
     });
   } catch (err) {
