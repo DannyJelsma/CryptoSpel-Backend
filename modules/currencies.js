@@ -47,7 +47,6 @@ async function updateCurrencies() {
     }
 
     _currencies = currencies;
-    console.log('currencies have been updated');
   } catch (err) {
     console.log(err);
   }

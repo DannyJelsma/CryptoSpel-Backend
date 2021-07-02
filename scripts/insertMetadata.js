@@ -31,8 +31,6 @@ database.once('open', async () => {
         });
 
         await model.save();
-
-        console.log('saved', currency.symbol);
       }
     }
   } catch (err) {
